@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 export const AuthContext = React.createContext({
   token: '',
@@ -10,10 +10,10 @@ export const AuthContext = React.createContext({
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem('token') || '');
 
-  const loginHandler = (token) => {
+  const loginHandler = useCallback((token) => {
     setToken(token);
     localStorage.setItem('token', token);
-  };
+  });
   const logoutHandler = () => {
     setToken(null);
     localStorage.removeItem('token');
