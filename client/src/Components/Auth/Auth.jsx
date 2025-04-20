@@ -21,6 +21,15 @@ function Auth() {
       return;
     }
 
+    if (
+      enteredEmail === '' ||
+      enteredPassword === '' ||
+      enteredConfirmPassword === ''
+    ) {
+      setMessage('Fill all fields');
+      return;
+    }
+
     const url = isLogin
       ? `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${process.env.REACT_APP_FIREBASE_WEB_API_KEY}`
       : `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${process.env.REACT_APP_FIREBASE_WEB_API_KEY}`;
