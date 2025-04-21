@@ -2,10 +2,13 @@ import React, { useContext } from 'react';
 import UpdateProfile from '../UpdateProfile/UpdateProfile';
 import { AuthContext } from '../Auth/AuthContext';
 import { Button } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
 const Profile = (props) => {
   const { setIsUpdateProfile, isUpdateProfile, setMessage } = props;
   const authContext = useContext(AuthContext);
+
+  const navigate = useNavigate();
   return (
     <>
       <div className="d-flex justify-content-between align-items-center mb-4">
@@ -39,6 +42,8 @@ const Profile = (props) => {
           Logout
         </Button>
       </div>
+
+      <Button onClick={() => navigate('/expenses')}>Go to Expenses</Button>
       {isUpdateProfile && (
         <UpdateProfile setIsUpdateProfile={setIsUpdateProfile} />
       )}
