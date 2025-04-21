@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Form, Button, Container, Row, Col, Alert } from 'react-bootstrap';
 import { AuthContext } from './AuthContext';
 import Profile from '../Profile/Profile';
-
+import ForgotPassword from './ForgotPassword';
 function Auth() {
   const [isLogin, setIsLogin] = useState(true);
   const emailInputRef = useRef();
@@ -12,6 +12,7 @@ function Auth() {
   const [message, setMessage] = useState('');
   const authContext = useContext(AuthContext);
   const [isUpdateProfile, setIsUpdateProfile] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const submitHandler = async (e) => {
@@ -75,6 +76,8 @@ function Auth() {
               isUpdateProfile={isUpdateProfile}
               setMessage={setMessage}
             />
+          ) : showForgotPassword ? (
+            <ForgotPassword onBack={() => setShowForgotPassword(false)} />
           ) : (
             <>
               {' '}
@@ -145,8 +148,17 @@ function Auth() {
                 >
                   {isLogin ? 'Login' : 'Sign Up'}
                 </Button>
+                {isLogin && (
+                  <Button
+                    variant="link"
+                    className="text-center mt-2"
+                    onClick={() => setShowForgotPassword(true)}
+                  >
+                    Forgot Password?
+                  </Button>
+                )}
               </Form>
-              <div className="text-center mt-3">
+              <div className="text-center mt-1">
                 <Button
                   variant="link"
                   onClick={() => setIsLogin((prev) => !prev)}
