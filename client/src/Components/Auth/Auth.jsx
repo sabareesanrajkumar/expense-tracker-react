@@ -4,6 +4,7 @@ import { Form, Button, Container, Row, Col, Alert } from 'react-bootstrap';
 import { AuthContext } from './AuthContext';
 import Profile from '../Profile/Profile';
 import ForgotPassword from './ForgotPassword';
+
 function Auth() {
   const [isLogin, setIsLogin] = useState(true);
   const emailInputRef = useRef();
