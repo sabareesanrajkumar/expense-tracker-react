@@ -1,15 +1,38 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useContext } from 'react';
 import axios from 'axios';
-
+import { AuthContext } from '../Auth/AuthContext';
 import { Form, Button, Row, Col } from 'react-bootstrap';
 
 const UpdateProfile = (props) => {
   const fullName = useRef();
   const photoUrl = useRef();
 
+  const authCtx = useContext(AuthContext);
+
+  const idToken = localStorage.getItem('token');
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await axios.post(
+          `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${process.env.REACT_APP_FIREBASE_WEB_API_KEY}`,
+          {
+            idToken,
+          }
+        );
+        const user = response.data.users[0];
+        if (user.displayName) fullName.current.value = user.displayName;
+        if (user.photoUrl) photoUrl.current.value = user.photoUrl;
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    if (authCtx.token) {
+      fetchProfile();
+    }
+  }, [authCtx.token]);
+
   const submitHandler = async (e) => {
     e.preventDefault();
-    const idToken = localStorage.getItem('token');
     try {
       await axios.post(
         `https://identitytoolkit.googleapis.com/v1/accounts:update?key=${process.env.REACT_APP_FIREBASE_WEB_API_KEY}`,
@@ -20,14 +43,6 @@ const UpdateProfile = (props) => {
           returnSecureToken: true,
         }
       );
-
-      const lookup = await axios.post(
-        `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${process.env.REACT_APP_FIREBASE_WEB_API_KEY}`,
-        {
-          idToken,
-        }
-      );
-      console.log('Updated user:>>>>>>>', lookup.data.users[0]);
       props.setIsUpdateProfile((prev) => !prev);
     } catch (error) {
       console.error('Error fetching user data:', error.response?.data?.error);
