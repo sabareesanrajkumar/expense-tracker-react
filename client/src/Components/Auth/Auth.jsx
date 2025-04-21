@@ -2,6 +2,7 @@ import React, { useState, useRef, useContext } from 'react';
 import axios from 'axios';
 import { Form, Button, Container, Row, Col, Alert } from 'react-bootstrap';
 import { AuthContext } from './AuthContext';
+import UpdateProfile from '../UpdateProfile/UpdateProfile';
 
 function Auth() {
   const [isLogin, setIsLogin] = useState(true);
@@ -10,6 +11,7 @@ function Auth() {
   const confirmPasswordInputRef = useRef();
   const [message, setMessage] = useState('');
   const authContext = useContext(AuthContext);
+  const [isUpdateProfile, setIsUpdateProfile] = useState(false);
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const submitHandler = async (e) => {
@@ -68,7 +70,21 @@ function Auth() {
       <Row className="justify-content-md-center">
         <Col md={6}>
           {isAuthenticated ? (
-            <h2 className="mb-4 text-center">Welcome to Expense Tracker</h2>
+            <>
+              <h2 className="mb-4 text-center">Welcome to Expense Tracker</h2>
+
+              <Button
+                onClick={() => {
+                  setIsUpdateProfile((prev) => !prev);
+                }}
+              >
+                {isUpdateProfile ? `Back` : `Your Profile is incomplete`}
+              </Button>
+
+              {isUpdateProfile && (
+                <UpdateProfile isUpdateProfile={isUpdateProfile} />
+              )}
+            </>
           ) : (
             <>
               {' '}
