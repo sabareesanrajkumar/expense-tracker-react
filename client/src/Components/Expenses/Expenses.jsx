@@ -10,6 +10,8 @@ import {
   Spinner,
 } from 'react-bootstrap';
 
+import EditExpense from './EditExpenses';
+
 function Expenses() {
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
@@ -18,7 +20,10 @@ function Expenses() {
   const [loading, setLoading] = useState(true);
 
   const firebaseURL = `${process.env.REACT_APP_FIREBASE_URL}/expenses.json`;
+  const [showEdit, setShowEdit] = useState(false);
+  const [expenseToEdit, setExpenseToEdit] = useState(null);
 
+  const REACT_APP_FIREBASE_URL = process.env.REACT_APP_FIREBASE_URL;
   //loading expenses on log in
   useEffect(() => {
     const fetchExpenses = async () => {
@@ -44,6 +49,23 @@ function Expenses() {
     fetchExpenses();
   }, [firebaseURL]);
 
+  //delete expense handler
+  const deleteExpenseHandler = async (id) => {
+    try {
+      await axios.delete(`${REACT_APP_FIREBASE_URL}/expenses/${id}.json`);
+      console.log('Expense successfully deleted');
+      setExpenses(expenses.filter((expense) => expense.id !== id));
+    } catch (error) {
+      console.error('Error deleting expense:', error);
+    }
+  };
+
+  //edit expense handler
+  const editExpenseHandler = (expense) => {
+    setExpenseToEdit(expense);
+    setShowEdit(true);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newExpense = { amount, description, category };
@@ -64,7 +86,7 @@ function Expenses() {
 
   return (
     <Container className="mt-4 d-flex flex-column align-items-center">
-      <div style={{ maxWidth: '500px', width: '100%' }}>
+      <div style={{ maxWidth: '650px', width: '100%' }}>
         <h4 className="mb-3 text-center">Add Expense</h4>
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-2">
@@ -122,12 +144,41 @@ function Expenses() {
                   <Col>
                     <em>{expense.category}</em>
                   </Col>
+                  <Col className="d-flex gap-2 justify-content-start">
+                    <Button
+                      variant="danger"
+                      onClick={() => deleteExpenseHandler(expense.id)}
+                    >
+                      Delete
+                    </Button>
+                    <Button
+                      variant="warning"
+                      onClick={() => editExpenseHandler(expense)}
+                    >
+                      Edit
+                    </Button>
+                  </Col>
                 </Row>
               </Card.Body>
             </Card>
           ))
         )}
       </div>
+
+      {showEdit && expenseToEdit && (
+        <EditExpense
+          expense={expenseToEdit}
+          onClose={() => setShowEdit(false)}
+          onUpdateExpense={(updatedExpense) => {
+            setExpenses(
+              expenses.map((expense) =>
+                expense.id === updatedExpense.id ? updatedExpense : expense
+              )
+            );
+            setShowEdit(false);
+          }}
+        />
+      )}
     </Container>
   );
 }
