@@ -11,11 +11,11 @@ const UpdateProfile = (props) => {
     e.preventDefault();
     const idToken = localStorage.getItem('token');
     try {
-      const response = await axios.post(
+      await axios.post(
         `https://identitytoolkit.googleapis.com/v1/accounts:update?key=${process.env.REACT_APP_FIREBASE_WEB_API_KEY}`,
         {
           idToken,
-          fullName: fullName.current.value,
+          displayName: fullName.current.value,
           photoUrl: photoUrl.current.value,
           returnSecureToken: true,
         }
@@ -27,7 +27,7 @@ const UpdateProfile = (props) => {
           idToken,
         }
       );
-      console.log('lp>>>>>>>>>>>>>', lookup);
+      console.log('Updated user:>>>>>>>', lookup.data.users[0]);
       props.setIsUpdateProfile((prev) => !prev);
     } catch (error) {
       console.error('Error fetching user data:', error.response?.data?.error);

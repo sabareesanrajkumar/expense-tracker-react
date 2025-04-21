@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('token', token);
   });
   const logoutHandler = () => {
-    setToken(null);
+    setToken('');
     localStorage.removeItem('token');
   };
   const contextValue = {

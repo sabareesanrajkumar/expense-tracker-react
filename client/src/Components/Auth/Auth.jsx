@@ -69,20 +69,24 @@ function Auth() {
     <Container className="my-5">
       <Row className="justify-content-md-center">
         <Col md={6}>
-          {isAuthenticated ? (
+          {authContext.isLoggedIn ? (
             <>
-              <h2 className="mb-4 text-center">Welcome to Expense Tracker</h2>
+              <div className="d-flex justify-content-between align-items-center mb-4">
+                <h2 className="text-center flex-grow-1 mb-0">
+                  Welcome to Expense Tracker
+                </h2>
 
-              <Button
-                onClick={() => {
-                  setIsUpdateProfile((prev) => !prev);
-                }}
-              >
-                {isUpdateProfile ? `Back` : `Your Profile is incomplete`}
-              </Button>
-
+                <Button
+                  className="ms-0"
+                  onClick={() => {
+                    setIsUpdateProfile((prev) => !prev);
+                  }}
+                >
+                  {isUpdateProfile ? `Back` : `Update Profile`}
+                </Button>
+              </div>
               {isUpdateProfile && (
-                <UpdateProfile isUpdateProfile={isUpdateProfile} />
+                <UpdateProfile setIsUpdateProfile={setIsUpdateProfile} />
               )}
             </>
           ) : (
