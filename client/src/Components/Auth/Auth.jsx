@@ -2,7 +2,7 @@ import React, { useState, useRef, useContext } from 'react';
 import axios from 'axios';
 import { Form, Button, Container, Row, Col, Alert } from 'react-bootstrap';
 import { AuthContext } from './AuthContext';
-import UpdateProfile from '../UpdateProfile/UpdateProfile';
+import Profile from '../Profile/Profile';
 
 function Auth() {
   const [isLogin, setIsLogin] = useState(true);
@@ -70,25 +70,11 @@ function Auth() {
       <Row className="justify-content-md-center">
         <Col md={6}>
           {authContext.isLoggedIn ? (
-            <>
-              <div className="d-flex justify-content-between align-items-center mb-4">
-                <h2 className="text-center flex-grow-1 mb-0">
-                  Welcome to Expense Tracker
-                </h2>
-
-                <Button
-                  className="ms-0"
-                  onClick={() => {
-                    setIsUpdateProfile((prev) => !prev);
-                  }}
-                >
-                  {isUpdateProfile ? `Back` : `Update Profile`}
-                </Button>
-              </div>
-              {isUpdateProfile && (
-                <UpdateProfile setIsUpdateProfile={setIsUpdateProfile} />
-              )}
-            </>
+            <Profile
+              setIsUpdateProfile={setIsUpdateProfile}
+              isUpdateProfile={isUpdateProfile}
+              setMessage={setMessage}
+            />
           ) : (
             <>
               {' '}
