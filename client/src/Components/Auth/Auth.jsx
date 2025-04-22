@@ -1,9 +1,13 @@
-import React, { useState, useRef, useContext } from 'react';
+import React, { useState, useRef } from 'react';
 import axios from 'axios';
 import { Form, Button, Container, Row, Col, Alert } from 'react-bootstrap';
-import { AuthContext } from './AuthContext';
+//import { AuthContext } from './AuthContext';
 import Profile from '../Profile/Profile';
 import ForgotPassword from './ForgotPassword';
+
+//using reducers
+import { useDispatch, useSelector } from 'react-redux';
+import { authActions } from '../store/authSlice';
 
 function Auth() {
   const [isLogin, setIsLogin] = useState(true);
@@ -11,11 +15,16 @@ function Auth() {
   const passwordInputRef = useRef();
   const confirmPasswordInputRef = useRef();
   const [message, setMessage] = useState('');
-  const authContext = useContext(AuthContext);
+  //const authContext = useContext(AuthContext);
   const [isUpdateProfile, setIsUpdateProfile] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  const dispatch = useDispatch();
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+
+  //submit Handler
   const submitHandler = async (e) => {
     e.preventDefault();
     const enteredEmail = emailInputRef.current.value;
@@ -55,7 +64,13 @@ function Auth() {
         }
       );
       console.log(response.data);
-      authContext.login(response.data.idToken);
+      //authContext.login(response.data.idToken);
+      dispatch(
+        authActions.login({
+          token: response.data.idToken,
+          userId: response.data.localId,
+        })
+      );
 
       setMessage('Authentication successful!');
       setIsAuthenticated(true);
@@ -71,7 +86,7 @@ function Auth() {
     <Container className="my-5">
       <Row className="justify-content-md-center">
         <Col md={6}>
-          {authContext.isLoggedIn ? (
+          {isLoggedIn ? (
             <Profile
               setIsUpdateProfile={setIsUpdateProfile}
               isUpdateProfile={isUpdateProfile}

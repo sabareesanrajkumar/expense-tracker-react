@@ -10,8 +10,14 @@ import Expenses from './Components/Expenses/Expenses';
 
 import { AuthContext } from './Components/Auth/AuthContext';
 import Auth from './Components/Auth/Auth';
+
+//using redux
+import { useSelector } from 'react-redux';
+
 function App() {
-  const authContext = useContext(AuthContext);
+  //const authContext = useContext(AuthContext);
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+
   return (
     <Router>
       <div className="App">
@@ -19,13 +25,7 @@ function App() {
           <Route path="/" element={<Auth />} />
           <Route
             path="/expenses"
-            element={
-              authContext.isLoggedIn ? (
-                <Expenses />
-              ) : (
-                <Navigate to="/" replace />
-              )
-            }
+            element={isLoggedIn ? <Expenses /> : <Navigate to="/" replace />}
           />
         </Routes>
       </div>

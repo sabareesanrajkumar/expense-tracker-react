@@ -12,11 +12,17 @@ import {
 
 import EditExpense from './EditExpenses';
 
+//using reducer
+import { useDispatch, useSelector } from 'react-redux';
+import { expenseActions } from '../store/expenseSlice';
+
+import { useNavigate } from 'react-router-dom';
+
 function Expenses() {
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('Food');
-  const [expenses, setExpenses] = useState([]);
+  //const [expenses, setExpenses] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const firebaseURL = `${process.env.REACT_APP_FIREBASE_URL}/expenses.json`;
@@ -24,6 +30,12 @@ function Expenses() {
   const [expenseToEdit, setExpenseToEdit] = useState(null);
 
   const REACT_APP_FIREBASE_URL = process.env.REACT_APP_FIREBASE_URL;
+
+  const dispatch = useDispatch();
+  const expenses = useSelector((state) => state.expenses.items);
+  const token = useSelector((state) => state.auth.token);
+
+  const navigate = useNavigate();
   //loading expenses on log in
   useEffect(() => {
     const fetchExpenses = async () => {
@@ -38,7 +50,8 @@ function Expenses() {
           });
         }
 
-        setExpenses(fetchedExpenses);
+        //setExpenses(fetchedExpenses);
+        dispatch(expenseActions.setExpenses(fetchedExpenses));
         setLoading(false);
       } catch (err) {
         console.error('Failed to fetch expenses', err);
@@ -54,7 +67,8 @@ function Expenses() {
     try {
       await axios.delete(`${REACT_APP_FIREBASE_URL}/expenses/${id}.json`);
       console.log('Expense successfully deleted');
-      setExpenses(expenses.filter((expense) => expense.id !== id));
+      //setExpenses(expenses.filter((expense) => expense.id !== id));
+      dispatch(expenseActions.deleteExpense(id));
     } catch (error) {
       console.error('Error deleting expense:', error);
     }
@@ -66,6 +80,11 @@ function Expenses() {
     setShowEdit(true);
   };
 
+  const totalAmount = expenses.reduce(
+    (acc, expense) => acc + Number(expense.amount),
+    0
+  );
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newExpense = { amount, description, category };
@@ -74,7 +93,8 @@ function Expenses() {
 
       if (res.status === 200) {
         const id = res.data.name;
-        setExpenses((prev) => [...prev, { id, ...newExpense }]);
+        //setExpenses((prev) => [...prev, { id, ...newExpense }]);
+        dispatch(expenseActions.addExpense({ id, ...newExpense }));
         setAmount('');
         setDescription('');
         setCategory('Food');
@@ -86,6 +106,9 @@ function Expenses() {
 
   return (
     <Container className="mt-4 d-flex flex-column align-items-center">
+      <Button className="justify-content-end" onClick={() => navigate('/')}>
+        Back
+      </Button>
       <div style={{ maxWidth: '650px', width: '100%' }}>
         <h4 className="mb-3 text-center">Add Expense</h4>
         <Form onSubmit={handleSubmit}>
@@ -128,6 +151,11 @@ function Expenses() {
         <hr className="my-3" />
 
         <h5 className="mb-3 text-center">Your Expenses</h5>
+        {totalAmount > 10000 && (
+          <Button variant="dark" className="w-100 mb-3">
+            Activate Premium
+          </Button>
+        )}
         {loading ? (
           <div className="text-center">
             <Spinner animation="border" />
@@ -170,11 +198,12 @@ function Expenses() {
           expense={expenseToEdit}
           onClose={() => setShowEdit(false)}
           onUpdateExpense={(updatedExpense) => {
-            setExpenses(
-              expenses.map((expense) =>
-                expense.id === updatedExpense.id ? updatedExpense : expense
-              )
-            );
+            // setExpenses(
+            //   expenses.map((expense) =>
+            //     expense.id === updatedExpense.id ? updatedExpense : expense
+            //   )
+            // );
+            dispatch(expenseActions.updateExpense(updatedExpense));
             setShowEdit(false);
           }}
         />

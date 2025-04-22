@@ -1,35 +1,37 @@
-import React, { useEffect, useRef, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { AuthContext } from '../Auth/AuthContext';
+//import { AuthContext } from '../Auth/AuthContext';
 import { Form, Button, Row, Col } from 'react-bootstrap';
 
+//using reducer
+import { useSelector } from 'react-redux';
+
 const UpdateProfile = (props) => {
-  const fullName = useRef();
-  const photoUrl = useRef();
+  const [fullName, setFullName] = useState('');
+  const [photoUrl, setPhotoUrl] = useState('');
 
-  const authCtx = useContext(AuthContext);
-
-  const idToken = localStorage.getItem('token');
+  //const authCtx = useContext(AuthContext);
+  const token = useSelector((state) => state.auth.token);
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const response = await axios.post(
           `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${process.env.REACT_APP_FIREBASE_WEB_API_KEY}`,
           {
-            idToken,
+            idToken: token,
           }
         );
         const user = response.data.users[0];
-        if (user.displayName) fullName.current.value = user.displayName;
-        if (user.photoUrl) photoUrl.current.value = user.photoUrl;
+        if (user.displayName) setFullName(user.displayName);
+        if (user.photoUrl) setPhotoUrl(user.photoUrl);
       } catch (err) {
         console.error(err);
       }
     };
-    if (authCtx.token) {
+    if (token) {
       fetchProfile();
     }
-  }, [authCtx.token]);
+  }, [token]);
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -37,9 +39,9 @@ const UpdateProfile = (props) => {
       await axios.post(
         `https://identitytoolkit.googleapis.com/v1/accounts:update?key=${process.env.REACT_APP_FIREBASE_WEB_API_KEY}`,
         {
-          idToken,
-          displayName: fullName.current.value,
-          photoUrl: photoUrl.current.value,
+          idToken: token,
+          displayName: fullName,
+          photoUrl: photoUrl,
           returnSecureToken: true,
         }
       );
@@ -60,7 +62,8 @@ const UpdateProfile = (props) => {
               type="text"
               placeholder="Full Name"
               required
-              ref={fullName}
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
             />
           </Col>
         </Form.Group>
@@ -74,7 +77,8 @@ const UpdateProfile = (props) => {
               type="url"
               placeholder="Photo URL"
               required
-              ref={photoUrl}
+              value={photoUrl}
+              onChange={(e) => setPhotoUrl(e.target.value)}
             />
           </Col>
         </Form.Group>
