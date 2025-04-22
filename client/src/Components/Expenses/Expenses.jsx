@@ -11,12 +11,13 @@ import {
 } from 'react-bootstrap';
 
 import EditExpense from './EditExpenses';
-
+import ThemeToggle from '../ToggleTheme/ToggleTheme';
 //using reducer
 import { useDispatch, useSelector } from 'react-redux';
 import { expenseActions } from '../store/expenseSlice';
 
 import { useNavigate } from 'react-router-dom';
+import DownloadExpenses from '../Download/DownloadExpenses';
 
 function Expenses() {
   const [amount, setAmount] = useState('');
@@ -34,6 +35,9 @@ function Expenses() {
   const dispatch = useDispatch();
   const expenses = useSelector((state) => state.expenses.items);
   const token = useSelector((state) => state.auth.token);
+  const isPremiumActivated = useSelector(
+    (state) => state.theme.isPremiumActivated
+  );
 
   const navigate = useNavigate();
   //loading expenses on log in
@@ -109,6 +113,12 @@ function Expenses() {
       <Button className="justify-content-end" onClick={() => navigate('/')}>
         Back
       </Button>
+      {isPremiumActivated && (
+        <>
+          <ThemeToggle />
+          <DownloadExpenses />
+        </>
+      )}
       <div style={{ maxWidth: '650px', width: '100%' }}>
         <h4 className="mb-3 text-center">Add Expense</h4>
         <Form onSubmit={handleSubmit}>
@@ -151,8 +161,12 @@ function Expenses() {
         <hr className="my-3" />
 
         <h5 className="mb-3 text-center">Your Expenses</h5>
-        {totalAmount > 10000 && (
-          <Button variant="dark" className="w-100 mb-3">
+        {totalAmount > 10000 && !isPremiumActivated && (
+          <Button
+            variant="dark"
+            className="w-100 mb-3"
+            onClick={() => dispatch({ type: 'ACTIVATE_PREMIUM' })}
+          >
             Activate Premium
           </Button>
         )}
