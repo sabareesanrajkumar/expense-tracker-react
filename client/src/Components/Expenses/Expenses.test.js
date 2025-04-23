@@ -16,3 +16,11 @@ describe('Expenses', () => {
     ).toBeDisabled();
   });
 });
+
+describe('async component', () => {
+  test('async component resting', () => {
+    render(<Expenses />);
+    const listItemElements = screen.getAllByRole('listemitem');
+    expect(listItemElements).not.toHaveLength(0);
+  });
+});
