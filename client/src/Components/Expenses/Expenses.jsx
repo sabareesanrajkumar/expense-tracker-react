@@ -152,7 +152,7 @@ function Expenses() {
             </Form.Select>
           </Form.Group>
           <div className="d-grid mb-3">
-            <Button type="submit" variant="primary">
+            <Button type="submit" variant="primary" name="add expenses">
               Add Expense
             </Button>
           </div>
