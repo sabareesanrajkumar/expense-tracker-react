@@ -1,0 +1,23 @@
+
+.hero-heading {
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 2rem;
+  }
+  
+.fixed-top-buttons {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  gap: 10px;
+}
+ 
+.btn-consistent {
+  min-height: 38px;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+}
+  

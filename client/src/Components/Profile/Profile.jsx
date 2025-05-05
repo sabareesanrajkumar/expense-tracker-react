@@ -3,7 +3,7 @@ import UpdateProfile from '../UpdateProfile/UpdateProfile';
 //import { AuthContext } from '../Auth/AuthContext';
 import { Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-
+import './profile.css';
 //reducer
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -36,34 +36,55 @@ const Profile = (props) => {
   };
   return (
     <>
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2 className="text-center flex-grow-1 mb-0">
-          Welcome to Expense Tracker
-        </h2>
-
+      <div className="fixed-top-buttons">
         <Button
-          className="ms-0"
-          onClick={() => {
-            setIsUpdateProfile((prev) => !prev);
-          }}
+          className="btn-consistent"
+          variant="primary"
+          onClick={() => setIsUpdateProfile((prev) => !prev)}
         >
-          {isUpdateProfile ? `Back` : `Update Profile`}
+          {isUpdateProfile ? 'Back' : 'Update Profile'}
         </Button>
-        {isLoggedIn && !emailVerified && (
+
+        {isLoggedIn && !emailVerified ? (
           <Button
-            className="ms-2"
+            className="btn-consistent"
+            variant="warning"
             onClick={() => dispatch(sendVerificationEmail(token))}
           >
             Verify Email ID
           </Button>
+        ) : (
+          isLoggedIn && (
+            <Button
+              className="btn-consistent"
+              variant="outline-success"
+              disabled
+            >
+              Email Verified
+            </Button>
+          )
         )}
-        {isLoggedIn && emailVerified && <p>Email Verified</p>}
-        <Button className="ms-2" onClick={handleLogout}>
+
+        <Button
+          className="btn-consistent"
+          variant="danger"
+          onClick={handleLogout}
+        >
           Logout
         </Button>
       </div>
 
-      <Button onClick={() => navigate('/expenses')}>Go to Expenses</Button>
+      <h1 className="hero-heading">Welcome to Expense Tracker</h1>
+
+      <div className="text-center mt-5">
+        <Button
+          style={{ marginBottom: '15px' }}
+          onClick={() => navigate('/expenses')}
+        >
+          Go to Expenses
+        </Button>
+      </div>
+
       {isUpdateProfile && (
         <UpdateProfile setIsUpdateProfile={setIsUpdateProfile} />
       )}

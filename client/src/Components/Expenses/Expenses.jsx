@@ -9,6 +9,7 @@ import {
   Card,
   Spinner,
 } from 'react-bootstrap';
+import { ArrowLeft } from 'react-bootstrap-icons';
 
 import EditExpense from './EditExpenses';
 import ThemeToggle from '../ToggleTheme/ToggleTheme';
@@ -110,8 +111,13 @@ function Expenses() {
 
   return (
     <Container className="mt-4 d-flex flex-column align-items-center">
-      <Button className="justify-content-end" onClick={() => navigate('/')}>
-        Back
+      <Button
+        variant="light"
+        onClick={() => navigate('/')}
+        className="position-fixed rounded-circle shadow-sm p-2"
+        style={{ left: '10px', top: '10px' }}
+      >
+        <ArrowLeft size={20} />
       </Button>
       {isPremiumActivated && (
         <>

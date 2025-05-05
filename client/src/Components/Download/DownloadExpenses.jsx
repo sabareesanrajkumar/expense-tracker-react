@@ -1,4 +1,5 @@
 import { useSelector } from 'react-redux';
+import { Button } from 'react-bootstrap';
 
 const DownloadExpenses = () => {
   const expenses = useSelector((state) => state.expenses?.items);
@@ -20,7 +21,18 @@ const DownloadExpenses = () => {
     URL.revokeObjectURL(url);
   };
 
-  return <button onClick={downloadCSV}>Download Expenses as CSV</button>;
+  return (
+    <div>
+      <Button
+        variant="outline-primary"
+        className="position-fixed p-3"
+        style={{ right: '20px', top: '80px' }}
+        onClick={downloadCSV}
+      >
+        Download Expenses
+      </Button>
+    </div>
+  );
 };
 
 export default DownloadExpenses;
