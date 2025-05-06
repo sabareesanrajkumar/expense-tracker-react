@@ -19,7 +19,7 @@ import { expenseActions } from '../store/expenseSlice';
 
 import { useNavigate } from 'react-router-dom';
 import DownloadExpenses from '../Download/DownloadExpenses';
-
+import { jwtDecode } from 'jwt-decode';
 function Expenses() {
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
@@ -47,12 +47,16 @@ function Expenses() {
       try {
         const res = await axios.get(firebaseURL);
         const fetchedExpenses = [];
+        const decodedToken = jwtDecode(localStorage.getItem('token'));
+        const currentUserId = decodedToken.user_id;
 
         for (const key in res.data) {
-          fetchedExpenses.push({
-            id: key,
-            ...res.data[key],
-          });
+          if (res.data[key].userId === currentUserId) {
+            fetchedExpenses.push({
+              id: key,
+              ...res.data[key],
+            });
+          }
         }
 
         //setExpenses(fetchedExpenses);
@@ -92,13 +96,16 @@ function Expenses() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const newExpense = { amount, description, category };
+    const decodedToken = jwtDecode(localStorage.getItem('token'));
+    const userId = decodedToken.user_id;
+    const newExpense = { amount, description, category, userId };
     try {
       const res = await axios.post(firebaseURL, newExpense);
 
       if (res.status === 200) {
         const id = res.data.name;
         //setExpenses((prev) => [...prev, { id, ...newExpense }]);
+
         dispatch(expenseActions.addExpense({ id, ...newExpense }));
         setAmount('');
         setDescription('');

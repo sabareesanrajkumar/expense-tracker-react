@@ -1,7 +1,7 @@
 module.exports = {
+  preset: 'ts-jest',
   transform: {
-    '^.+\\.[jt]sx?$': 'babel-jest',
+    '^.+\\.(ts|tsx)?$': 'ts-jest',
+    '^.+\\.(js|jsx)$': 'babel-jest',
   },
-  transformIgnorePatterns: ['/node_modules/(?!axios)'],
-  testEnvironment: 'jsdom',
 };
